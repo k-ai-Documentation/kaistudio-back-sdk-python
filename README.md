@@ -9,7 +9,7 @@ projects.
 ## Installation
 Install with pip:
 ```
-pip install git+https://github.com/k-ai-Documentation/sdk-python.git@version2.0
+pip install git+https://github.com/k-ai-Documentation/sdk-python-kaistudio.git
 ```
 
 ## Quick start
@@ -50,9 +50,9 @@ from kai_sdk_python_kaistudio.index import KaiStudio, KaiStudioCredentials
 
 //apiKey is optionnal
 credentials = KaiStudioCredentials(host="your server host", apiKey="your api key")
-search = KaiStudio(credentials).search()
-print("SEARCH QUERY:")
-print(await search.query("what is the history of France TV?", "userid"))
+file_manager = KaiStudio(credentials).file_manager()
+print("LIST FILES:")
+print(await file_manager.list_files())
 
 ```
 
@@ -109,21 +109,6 @@ file_instance = KaiStudio(credentials).file_manager()
 print("LIST FILES:")
 print(await file_instance.list_files())
 ```
-
-#### state-document 
-We have 7 states for a document:
-
-```python
-'PARSING_ERROR', # document type is not supported
-'INITIAL_SAVED', # initial save
-"UPDATED", # document is updated (without the content) par rapport à l'API
-'ON_CONTENT_EXTRACT', # document content is currently is working on fileparser
-'CONTENT_EXTRACTED', # document content is fetch from fileparser and chunks is saved
-'ON_INDEXATION', # document is in indexation progress
-'INDEXED' # document is fully indexed
-```
-
-<u>**For more examples, you can check the [example.py](example.py) file.**</u>
 
 ## Contributing
 

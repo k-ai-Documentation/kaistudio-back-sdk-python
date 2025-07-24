@@ -10,4 +10,4 @@ credentials = KaiStudioCredentials(
 
 
 file_manager = KaiStudio(credentials).file_manager()
-
+manage_instance = KaiStudio(credentials).manage_instance()
