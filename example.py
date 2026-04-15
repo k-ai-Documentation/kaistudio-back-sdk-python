@@ -1,4 +1,4 @@
-from kai_sdk_python_kaistudio.index import KaiStudioBackApi, KaiStudioCredentials
+from kaistudio_back_sdk.index import KaiStudioBackApi, KaiStudioCredentials
 
 credentials = KaiStudioCredentials(
     token="your bearer token",

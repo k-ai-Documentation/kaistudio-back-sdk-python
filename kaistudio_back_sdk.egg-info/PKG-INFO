@@ -1,0 +1,12 @@
+Metadata-Version: 2.4
+Name: kaistudio_back_sdk
+Version: 20260415
+Summary: Python SDK for the KAI Studio Back API
+Author-email: KAI <support@kai.ai>
+License: MIT
+Project-URL: Homepage, https://github.com/k-ai-Documentation/kaistudio-back-sdk-python
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.8
+Requires-Dist: httpx==0.28.0

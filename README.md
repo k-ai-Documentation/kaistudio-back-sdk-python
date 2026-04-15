@@ -5,7 +5,7 @@ Python SDK for the [KAI Studio](https://kai-studio.ai) Back API. Mirrors the str
 ## Installation
 
 ```bash
-pip install git+https://github.com/k-ai-Documentation/sdk-python-kaistudio.git
+pip install git+https://github.com/k-ai-Documentation/kaistudio-back-sdk-python.git
 ```
 
 For local development:
@@ -18,7 +18,7 @@ pip install -e .
 
 ```python
 import asyncio
-from kai_sdk_python_kaistudio.index import KaiStudioBackApi, KaiStudioCredentials
+from kaistudio_back_sdk.index import KaiStudioBackApi, KaiStudioCredentials
 
 credentials = KaiStudioCredentials(
     token="your-bearer-token",
