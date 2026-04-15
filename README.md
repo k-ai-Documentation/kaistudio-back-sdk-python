@@ -1,119 +1,152 @@
-# sdk-python
+# sdk-python-kaistudio
 
-## Introduction
-
-SDK python kaistudio enables developers to efficiently manage files, instance, perform searches, handle thematic content, and
-conduct audits. This toolkit is designed to streamline the integration of complex functionalities into python-based
-projects.
+Python SDK for the [KAI Studio](https://kai-studio.ai) Back API. Mirrors the structure of the official JS SDK (`kaistudio-back-sdk-js`).
 
 ## Installation
-Install with pip:
-```
+
+```bash
 pip install git+https://github.com/k-ai-Documentation/sdk-python-kaistudio.git
 ```
 
-## Quick start
+For local development:
 
-There are two type of versions: SaaS version and Premise version.
-
-#### SaaS version
-
-SaaS version means you are using the service provided by Kai with cloud service. In this case, you will need 3 keys (
-organizationId, instanceId, apiKey) to initialize kaiStudio.
-
-Here's a simple example to get you started with the SDK:
-
+```bash
+pip install -e .
 ```
-from kai_sdk_python_kaistudio.index import KaiStudio, KaiStudioCredentials
+
+## Quick Start
+
+```python
+import asyncio
+from kai_sdk_python_kaistudio.index import KaiStudioBackApi, KaiStudioCredentials
 
 credentials = KaiStudioCredentials(
-    organization_id="your organization id",
-    instance_id="your instance id",
-    api_key="your api key"
+    token="your-bearer-token",
+    # host="https://your-server/"  # optional, defaults to https://back.kai-studio.ai
 )
 
-file_manager = KaiStudio(credentials).file_manager()
-print("LIST FILES:")
-print(await file_manager.list_files())
+api = KaiStudioBackApi(credentials)
 
+async def main():
+    user = api.core().user()
+    print(await user.get_info())
+
+asyncio.run(main())
 ```
 
-#### Premise version
+> All API methods are `async` and must be called with `await`.
 
-Premise version means you are using the service in your local server in your enterprise. In this case, you will need
-host and api key (optional) to initialize kaiStudio.
-
-Here's a simple example to get you started with the SDK:
+## Module Overview
 
 ```
-from kai_sdk_python_kaistudio.index import KaiStudio, KaiStudioCredentials
-
-//apiKey is optionnal
-credentials = KaiStudioCredentials(host="your server host", apiKey="your api key")
-file_manager = KaiStudio(credentials).file_manager()
-print("LIST FILES:")
-print(await file_manager.list_files())
-
+api.core().user()               # User management
+api.studio().instance()         # Instance management
+api.studio().knowledge_base()   # Knowledge base utilities
+api.studio().organization()     # Organization management
+api.global_admin()              # Global admin operations
 ```
 
-## Usage Guide
+---
 
-### ManageInstance
+## `api.core().user()`
 
-[ManageInstance.py](modules/ManageInstance.py) provides methods for managing instance.
+| Method | Parameters | Description |
+|---|---|---|
+| `get_info` | — | Get authenticated user info |
+| `add_user` | `name, email, organization_id` | Create a user and send a welcome email |
+| `update_user` | `id, name, email, organization_id` | Update user details |
+| `delete_user` | `id, organization_id` | Delete a user |
+| `update_password` | `id, password` | Update a user's password |
+| `set_user_admin` | `id, is_global_admin, organization_id` | Grant or revoke admin status |
 
-- `generate_new_api_key` : generate a new API key
-- `update_name` : update the instance name
-  > name: 'The new name for the instance'
-- `deploy` : deploy an instance
-  > name: 'The name of the instance to deploy'
-- `delete` : delete an instance
-  > name: 'The name of the instance to delete'
-- `add_kb` : add a knowledge base to the instance
-  > kb_type: 'Type of knowledge base'
-  > options: 'Configuration options for the knowledge base'
-  > search_goal: 'The search goal associated with the KB'
-- `set_playground` : set playground types for the instance
-  > type_list: 'A list of playground types'
-- `update_kb` : update a knowledge base
-  > id: 'The ID of the knowledge base to update'
-  > options: 'Updated configuration options'
-  > search_goal: 'Updated search goal'
-- `remove_kb` : remove a knowledge base from the instance
-  > id: 'The ID of the knowledge base to remove'
-
-For example:
-
-```py
-manage_instance = KaiStudio(credentials).manage_instance()
-print("GET GLOBAL HEALTH:")
-print(await manage_instance.get_global_health())
+```python
+user = api.core().user()
+info = await user.get_info()
+result = await user.add_user(name="Jane Doe", email="jane@example.com", organization_id="org-123")
 ```
 
-### FileInstance
+---
 
-[FileInstance.py](modules/FileInstance.py) provides methods for interacting with the Kai Studio file management API.
+## `api.studio().instance()`
 
-- `list_files` : list all available files in Kai Studio
-- `upload_files` : upload multiple files to Kai Studio
-  > files: 'List of file data to upload'
-- `download_file` : download a file from Kai Studio
-  > fileName: 'Name of the file to download'
-- `delete_file` : delete a file from Kai Studio
-  > fileName: 'Name of the file to delete'
+| Method | Parameters | Description |
+|---|---|---|
+| `create` | `organization_id, name` | Create a new instance |
+| `get` | `instance_id` | Get instance configuration |
+| `get_detail` | `instance_id` | Get instance detail (name, logo, extra properties) |
+| `update_name` | `instance_id, name` | Rename an instance |
+| `set_scenarios` | `instance_id, scenarios` | Set scenarios (`AUDIT`, `SEARCH`, `DOCUMENT_COMPANION`) |
+| `delete` | `instance_id` | Delete an instance |
+| `deploy` | `instance_id` | Deploy an instance |
+| `generate_api_key` | `instance_id` | Generate a new API key |
+| `add_kb` | `instance_id, type, options, search_goal` | Add a knowledge base |
+| `update_kb` | `id, instance_id, type, options, search_goal` | Update a knowledge base |
+| `list_kb` | `instance_id` | List knowledge bases |
+| `delete_kb` | `id, instance_id` | Remove a knowledge base |
+| `grant_user_access_demo` | `instance_id, user_id` | Grant demo access to a user |
+| `revoke_user_access_demo` | `instance_id, user_id` | Revoke demo access from a user |
+| `get_all_users_access_demo` | `instance_id` | List users with demo access |
+| `update_detail` | `instance_id, name, extra_properties, logo_file` | Update instance detail (`logo_file` is SVG bytes) |
 
-For example:
-
-```py
-file_instance = KaiStudio(credentials).file_manager()
-print("LIST FILES:")
-print(await file_instance.list_files())
+```python
+instance = api.studio().instance()
+config = await instance.get(instance_id="inst-123")
+kbs = await instance.list_kb(instance_id="inst-123")
 ```
+
+---
+
+## `api.studio().knowledge_base()`
+
+| Method | Parameters | Description |
+|---|---|---|
+| `list_available_kb_type` | — | List all available KB types |
+| `get_credentials_for_by_type` | `kb_type` | Get the required credentials schema for a KB type |
+| `get_kb_type_from_internal_type` | `kb_type` | Resolve an internal KB type to its display type |
+
+---
+
+## `api.studio().organization()`
+
+| Method | Parameters | Description |
+|---|---|---|
+| `list` | — | List organizations for the authenticated user |
+| `create` | `name` | Create an organization (global admin only) |
+| `change_name` | `organization_id, name` | Rename an organization |
+| `add_user` | `organization_id, user_id, is_admin` | Add a user to an organization |
+| `update_user` | `organization_id, user_id, is_admin` | Update a user's admin status |
+| `remove_user` | `organization_id, user_id` | Remove a user from an organization |
+| `list_users` | `organization_id` | List users in an organization |
+| `list_instances` | `organization_id` | List instances in an organization |
+| `is_admin` | `organization_id, user_id` | Check if a user is an admin |
+| `grant_user_can_access_kaistudio` | `organization_id, user_id` | Grant KAI Studio access |
+| `revoke_user_can_access_kaistudio` | `organization_id, user_id` | Revoke KAI Studio access |
+| `user_can_access_kaistudio` | `organization_id, user_id` | Check if a user has KAI Studio access |
+
+---
+
+## `api.global_admin()`
+
+> Requires global admin role.
+
+| Method | Parameters | Description |
+|---|---|---|
+| `list_users` | `offset, limit` | List all users (paginated) |
+| `list_apps` | — | List all apps |
+| `list_apps_for_user` | `user_id` | List apps assigned to a user |
+| `add_app_for_user` | `user_id, app_id` | Assign an app to a user |
+| `remove_app_for_user` | `user_id, app_id` | Remove an app from a user |
+| `toggle_user_active` | `user_id` | Toggle a user's active status |
+
+```python
+admin = api.global_admin()
+users = await admin.list_users(offset=0, limit=20)
+```
+
+---
 
 ## Contributing
 
-bxu@k-ai.ai
-
-rmei@k-ai.ai
-
-sngo@k-ai.ai
+- bxu@k-ai.ai
+- rmei@k-ai.ai
+- sngo@k-ai.ai

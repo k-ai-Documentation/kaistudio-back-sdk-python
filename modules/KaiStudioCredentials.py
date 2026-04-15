@@ -1,11 +1,10 @@
-class KaiStudioCredentials:
-    organization_id: str
-    instance_id: str
-    api_key: str
-    host: str
+from typing import Optional
 
-    def __init__(self,organization_id: str, api_key: str, instance_id: str, host: str):
-        self.organization_id = organization_id
-        self.instance_id = instance_id
-        self.api_key = api_key
+
+class KaiStudioCredentials:
+    host: Optional[str]
+    token: Optional[str]
+
+    def __init__(self, token: Optional[str] = None, host: Optional[str] = None):
+        self.token = token
         self.host = host

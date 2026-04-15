@@ -1,13 +1,19 @@
-import asyncio
-
-from kai_sdk_python_kaistudio.index import KaiStudio, KaiStudioCredentials
+from kai_sdk_python_kaistudio.index import KaiStudioBackApi, KaiStudioCredentials
 
 credentials = KaiStudioCredentials(
-    organization_id="your organization id",
-    instance_id="your instance id",
-    api_key="your api key"
+    token="your bearer token",
+    # host="https://your-server/"  # optional, defaults to https://back.kai-studio.ai
 )
 
+api = KaiStudioBackApi(credentials)
 
-file_manager = KaiStudio(credentials).file_manager()
-manage_instance = KaiStudio(credentials).manage_instance()
+# Core — user management
+user = api.core().user()
+
+# Studio — instance, knowledge base, organization management
+instance = api.studio().instance()
+knowledge_base = api.studio().knowledge_base()
+organization = api.studio().organization()
+
+# Global admin
+global_admin = api.global_admin()

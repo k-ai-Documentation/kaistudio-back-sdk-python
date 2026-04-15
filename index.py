@@ -1,32 +1,30 @@
-from .modules.FileInstance import FileInstance
-from .modules.ManageInstance import ManageInstance
 from .modules.KaiStudioCredentials import KaiStudioCredentials
+from .modules.core.CoreModule import CoreModule
+from .modules.studio.StudioModule import StudioModule
+from .modules.global_admin.GlobalAdminModule import GlobalAdminModule
 
-class KaiStudio:
-    __file__: FileInstance
+
+class KaiStudioBackApi:
     def __init__(self, credentials: KaiStudioCredentials):
+        base_url = credentials.host if credentials.host else 'https://back.kai-studio.ai'
+
+        headers = {}
+        if credentials.token:
+            headers['Authorization'] = f'Bearer {credentials.token}'
+
         self.__credentials = credentials
-
-        if self.__credentials.instance_id and self.__credentials.api_key:
-            headers = {
-                'api-key': self.__credentials.api_key,
-                'instance-id': self.__credentials.instance_id,
-                'organization-id': self.__credentials.organization_id
-            }
-
-            base_url: str = "https://api.kai-studio.ai/"
-
-            if self.__credentials.host:
-                base_url = self.__credentials.host
-                if self.__credentials.api_key:
-                    headers = {
-                        'api-key': self.__credentials.api_key
-                    }
-            self.__file = FileInstance(headers=headers, base_url=base_url)
-            self.__manage_instance = ManageInstance(headers=headers, base_url=base_url)
+        self.__core = CoreModule(base_url, headers)
+        self.__studio = StudioModule(base_url, headers)
+        self.__global_admin = GlobalAdminModule(base_url, headers)
 
     def get_credentials(self) -> KaiStudioCredentials:
-        return self.__manage_instance
+        return self.__credentials
 
-    def file_manager(self) -> FileInstance:
-        return self.__file
+    def core(self) -> CoreModule:
+        return self.__core
+
+    def studio(self) -> StudioModule:
+        return self.__studio
+
+    def global_admin(self) -> GlobalAdminModule:
+        return self.__global_admin
